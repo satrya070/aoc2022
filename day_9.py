@@ -1,16 +1,27 @@
 lines = [
-'R 4',
-'U 4',
-'L 3',
-'D 1',
-'R 4',
-'D 1',
-'L 5',
-'R 2'  # hit count 9
+    'R 4',
+    'U 4',
+    'L 3',
+    'D 1',
+    'R 4',
+    'D 1',
+    'L 5',
+    'R 2'  # hit count 9
 ]
 
-# with open('data/day_9.txt') as handle:
-#     lines = [line[:-1] for line in handle.readlines()]
+lines = [  # ex2
+    'R 5',
+    'U 8',
+    'L 8',
+    'D 3',
+    'R 17',
+    'D 10',
+    'L 25',
+    'U 20'
+]
+
+with open('data/day_9.txt') as handle:
+    lines = [line[:-1] for line in handle.readlines()]
 
 def offside(row, col, tail):
     """ 
@@ -94,6 +105,10 @@ for line in lines:
                 else:
                     tails[pid-1] = process_node(tails[pid], tails[pid-1])
 
+                # add tail visited
+                if pid == 1:
+                    tail_visits.append(tuple(tails[pid-1]))
+
             head = new_head
     
     elif direction == 'L':
@@ -105,6 +120,10 @@ for line in lines:
                     tails[pid-1] = process_node(new_head, tails[pid-1])
                 else:
                     tails[pid-1] = process_node(tails[pid], tails[pid-1])
+                
+                # add tail visited
+                if pid == 1:
+                    tail_visits.append(tuple(tails[pid-1]))
 
             head = new_head
 
@@ -117,6 +136,10 @@ for line in lines:
                     tails[pid-1] = process_node(new_head, tails[pid-1])
                 else:
                     tails[pid-1] = process_node(tails[pid], tails[pid-1])
+                
+                # add tail visited
+                if pid == 1:
+                    tail_visits.append(tuple(tails[pid-1]))
 
             head = new_head
 
@@ -129,9 +152,12 @@ for line in lines:
                     tails[pid-1] = process_node(new_head, tails[pid-1])
                 else:
                     tails[pid-1] = process_node(tails[pid], tails[pid-1])
+                
+                # add tail visited
+                if pid == 1:
+                    tail_visits.append(tuple(tails[pid-1]))
 
             head = new_head
 
-    # print(line, head)
-
 print('done')
+print(len(set(tail_visits)))
