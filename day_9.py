@@ -6,11 +6,11 @@ lines = [
 'R 4',
 'D 1',
 'L 5',
-'R 2'
+'R 2'  # hit count 9
 ]
 
-with open('data/day_9.txt') as handle:
-    lines = [line[:-1] for line in handle.readlines()]
+# with open('data/day_9.txt') as handle:
+#     lines = [line[:-1] for line in handle.readlines()]
 
 def offside(row, col, tail):
     """ 
@@ -69,13 +69,13 @@ def process_node(new_head, tail):
     # for node in nodes
     if offside(*new_head, tail):
         tail = next_position(*new_head, *tail)
-        tail_visits.append(tuple(tail))
+        # tail_visits.append(tuple(tail))
     
     return tail
 
-#--------------------------program----------#
+#--------------------------program-------------------------#
 head = [0, 0]
-tail = [0, 0]
+tails = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]
 tail_visits = []
 
 for line in lines:
@@ -85,9 +85,14 @@ for line in lines:
     
     if direction == 'R':
         for i in range(amount):
+
             new_head = [head[0], head[1] + 1]
-            
-            tail = process_node(new_head, tail)
+
+            for pid in range(9, 0, -1):
+                if pid == 9:
+                    tails[pid-1] = process_node(new_head, tails[pid-1])
+                else:
+                    tails[pid-1] = process_node(tails[pid], tails[pid-1])
 
             head = new_head
     
@@ -95,7 +100,11 @@ for line in lines:
         for i in range(amount):
             new_head = [head[0], head[1] - 1]
             
-            tail = process_node(new_head, tail)
+            for pid in range(9, 0, -1):
+                if pid == 9:
+                    tails[pid-1] = process_node(new_head, tails[pid-1])
+                else:
+                    tails[pid-1] = process_node(tails[pid], tails[pid-1])
 
             head = new_head
 
@@ -103,7 +112,11 @@ for line in lines:
         for i in range(amount):
             new_head = [head[0] + 1, head[1]]
             
-            tail = process_node(new_head, tail)
+            for pid in range(9, 0, -1):
+                if pid == 9:
+                    tails[pid-1] = process_node(new_head, tails[pid-1])
+                else:
+                    tails[pid-1] = process_node(tails[pid], tails[pid-1])
 
             head = new_head
 
@@ -111,7 +124,11 @@ for line in lines:
         for i in range(amount):
             new_head = [head[0] - 1, head[1]]
             
-            tail = process_node(new_head, tail)
+            for pid in range(9, 0, -1):
+                if pid == 9:
+                    tails[pid-1] = process_node(new_head, tails[pid-1])
+                else:
+                    tails[pid-1] = process_node(tails[pid], tails[pid-1])
 
             head = new_head
 
