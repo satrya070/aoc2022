@@ -6,6 +6,10 @@ with open('data/day_12ex.txt') as handle:
     lines = handle.readlines()
     lines = [line[:-1] for line in lines]
 
+with open('data/day_12.txt') as handle:
+    lines = handle.readlines()
+    lines = [line[:-1] for line in lines]
+
 
 def convert_heightmap():
     # convert letters to number values
@@ -48,8 +52,8 @@ distmap = np.zeros(heightmap.shape, dtype='uint16')
 distmap[np.where(distmap == 0)] = 9999
 
 priority_queue = queue.PriorityQueue()
-start = (0, 0)
-END = (2, 5)
+start = (20, 0) #(0, 0)
+END = (20, 112) # (2, 5)
 distmap[start] = 0
 val = heightmap[start]
 visited = []
@@ -69,12 +73,12 @@ while searching:
     if current_dist != distmap[current]:
         continue
     
-    low_tier = heightmap[current] - 1
+    # low_tier = heightmap[current] - 1
     high_tier = heightmap[current] + 1
         
     neighbors = get_adjacent_coords(current[0], current[1], heightmap)
     # filter non height-adjadcents neighbors
-    neighbors = [neighbor for neighbor in neighbors if low_tier <= heightmap[neighbor] <= high_tier]
+    neighbors = [neighbor for neighbor in neighbors if heightmap[neighbor] <= high_tier]
     
     # filter out visited
     neighbors = list(filter(lambda x: x not in visited, neighbors))
@@ -98,6 +102,4 @@ while searching:
     visited.append(current)
 
     # break
-
-
-print('done')
+print('fasdf')
