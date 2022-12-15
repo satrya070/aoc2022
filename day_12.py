@@ -1,6 +1,7 @@
 import queue
 import numpy as np
 import string
+import matplotlib.pyplot as plt
 
 with open('data/day_12ex.txt') as handle:
     lines = handle.readlines()
@@ -13,16 +14,16 @@ with open('data/day_12.txt') as handle:
 
 def convert_heightmap():
     # convert letters to number values
-    letter_map = {letter:k+1 for k, letter in enumerate(string.ascii_lowercase)}
+    letter_map = {letter:k+1 for k, letter in enumerate(string.ascii_lowercase[::-1])}
     
     height_map = []
     for line in lines:
         val_line = []
         for letter in line:
             if letter == 'S':
-                val_line.append(0)
-            elif letter == 'E':
                 val_line.append(27)
+            elif letter == 'E':
+                val_line.append(0)
             else:
                 val_line.append(letter_map[letter])
         
@@ -112,3 +113,4 @@ for k, start in enumerate(startings):
     # break
 print(results)
 print('DONE BEBEEE')
+
