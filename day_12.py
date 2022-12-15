@@ -1,24 +1,29 @@
 import queue
 import numpy as np
 import string
+import matplotlib.pyplot as plt
 
 with open('data/day_12ex.txt') as handle:
     lines = handle.readlines()
     lines = [line[:-1] for line in lines]
 
+# with open('data/day_12.txt') as handle:
+#     lines = handle.readlines()
+#     lines = [line[:-1] for line in lines]
+
 
 def convert_heightmap():
     # convert letters to number values
-    letter_map = {letter:k+1 for k, letter in enumerate(string.ascii_lowercase)}
+    letter_map = {letter:k+1 for k, letter in enumerate(string.ascii_lowercase[::-1])}
     
     height_map = []
     for line in lines:
         val_line = []
         for letter in line:
             if letter == 'S':
-                val_line.append(0)
-            elif letter == 'E':
                 val_line.append(27)
+            elif letter == 'E':
+                val_line.append(0)
             else:
                 val_line.append(letter_map[letter])
         
@@ -45,14 +50,16 @@ def get_adjacent_coords(row, col, heightmap):
 heightmap = convert_heightmap()
 
 distmap = np.zeros(heightmap.shape, dtype='uint16')
-distmap[np.where(distmap == 0)] = 9999
+distmap[np.where(distmap == 0)] = 34463
 
 priority_queue = queue.PriorityQueue()
-start = (0, 0)
-END = (2, 5)
+start =  (2, 5)  # (20, 0)
+END = (0, 0)  # (20, 112)
 distmap[start] = 0
 val = heightmap[start]
 visited = []
+
+steps = 0
 
 searching = True
 
@@ -97,7 +104,10 @@ while searching:
             
     visited.append(current)
 
-    # break
+    steps += 1
+    if steps % 10 == 0:
+        print(f'still here {steps}', current, heightmap[current])
 
 
+#plt.imsave('./test12.png', heightmap)
 print('done')
