@@ -7,9 +7,9 @@ with open('data/day_12ex.txt') as handle:
     lines = handle.readlines()
     lines = [line[:-1] for line in lines]
 
-# with open('data/day_12.txt') as handle:
-#     lines = handle.readlines()
-#     lines = [line[:-1] for line in lines]
+with open('data/day_12.txt') as handle:
+    lines = handle.readlines()
+    lines = [line[:-1] for line in lines]
 
 
 def convert_heightmap():
@@ -48,66 +48,69 @@ def get_adjacent_coords(row, col, heightmap):
 
 
 heightmap = convert_heightmap()
+results = []
 
-distmap = np.zeros(heightmap.shape, dtype='uint16')
-distmap[np.where(distmap == 0)] = 34463
+startings = [(row, 0) for row in range(41)]
+# startings = [(20, 0)]
 
-priority_queue = queue.PriorityQueue()
-start =  (2, 5)  # (20, 0)
-END = (0, 0)  # (20, 112)
-distmap[start] = 0
-val = heightmap[start]
-visited = []
+for k, start in enumerate(startings):
+    print(f'starting run for {start}!')
 
-steps = 0
+    distmap = np.zeros(heightmap.shape, dtype='uint16')
+    distmap[np.where(distmap == 0)] = 9999
 
-searching = True
+    priority_queue = queue.PriorityQueue()
+    # start = (20, 0) #(0, 0)
+    END = (20, 112) # (2, 5)
+    distmap[start] = 0
+    val = distmap[start]
+    visited = []
 
-priority_queue.put((val, start))
+    searching = True
 
-# main loop
-while searching:
-    current_dist, current = priority_queue.get()
+    priority_queue.put((val, start))
 
-    if current in visited:
-        continue
-    
-    # ensure already visited lower finds for position persist
-    if current_dist != distmap[current]:
-        continue
-    
-    low_tier = heightmap[current] - 1
-    high_tier = heightmap[current] + 1
+    # main loop
+    while searching:
+        current_dist, current = priority_queue.get()
+
+        if current in visited:
+            continue
         
-    neighbors = get_adjacent_coords(current[0], current[1], heightmap)
-    # filter non height-adjadcents neighbors
-    neighbors = [neighbor for neighbor in neighbors if low_tier <= heightmap[neighbor] <= high_tier]
-    
-    # filter out visited
-    neighbors = list(filter(lambda x: x not in visited, neighbors))
-    
-    # visit flow
-    for neighbor in neighbors:
+        # ensure already visited lower finds for position persist
+        if current_dist != distmap[current]:
+            continue
         
-        if neighbor == END:
-            distmap[END] = current_dist + 1
-            print('DONE')
-            searching = False
-        
-        current_neighbor_dist = distmap[neighbor]
-        alt_neighbor_dist = current_dist + 1  # every neighbor dist is 1
-        
-        if alt_neighbor_dist < current_neighbor_dist:
-            distmap[neighbor] = current_dist + 1
-        
-        priority_queue.put((distmap[neighbor], neighbor))
+        high_tier = heightmap[current] + 1
             
-    visited.append(current)
+        neighbors = get_adjacent_coords(current[0], current[1], heightmap)
+        # filter non height-adjadcents neighbors
+        neighbors = [neighbor for neighbor in neighbors if heightmap[neighbor] <= high_tier]
+        
+        # filter out visited
+        neighbors = list(filter(lambda x: x not in visited, neighbors))
+        
+        # visit flow
+        for neighbor in neighbors:
+            
+            if neighbor == END:
+                distmap[END] = current_dist + 1
+                print('DONE')
+                searching = False
+            
+            current_neighbor_dist = distmap[neighbor]
+            alt_neighbor_dist = current_dist + 1  # every neighbor dist is 1
+            
+            if alt_neighbor_dist < current_neighbor_dist:
+                distmap[neighbor] = current_dist + 1
+            
+            priority_queue.put((distmap[neighbor], neighbor))
+                
+        visited.append(current)
+    
+    results.append((start, distmap[END]))
 
-    steps += 1
-    if steps % 10 == 0:
-        print(f'still here {steps}', current, heightmap[current])
+    # break
+print(results)
+print('DONE BEBEEE')
 
-
-#plt.imsave('./test12.png', heightmap)
-print('done')
