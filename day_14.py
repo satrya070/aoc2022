@@ -9,6 +9,10 @@ with open('data/day_14ex.txt') as handle:
     lines = handle.readlines()
     lines = [line[:-1] for line in lines]
 
+with open('data/day_14.txt') as handle:
+    lines = handle.readlines()
+    lines = [line[:-1] for line in lines]
+
 
 def generate_line(start, end):
     """ generate line of number between 2 points """
@@ -55,10 +59,10 @@ def generate_wall(lines):
 
     return wall_coords
 
-## generate sand units
+### sand simulation
 wall_coords = generate_wall(lines)
 sand_coords = []
-VOID = 9
+VOID = max([wall[1] for wall in wall_coords])  # 176
 POURING = True
 
 # while len(sand_coords) < 24:
@@ -106,4 +110,4 @@ for coord in sand_coords:
 
 plt.imsave('./day14.png', canvas)
 
-print('done')    
+print('done')
