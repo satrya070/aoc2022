@@ -59,16 +59,43 @@ def generate_wall(lines):
 
     return wall_coords
 
+
+# draw visual
+def draw(step):
+    canvas = np.zeros((200, 100), dtype='uint8')
+    for coord in wall_coords:
+        c = coord[0] - 450
+        r = coord[1]
+        canvas[r, c] = 5
+
+    for coord in sand_coords:
+        if (0 <= coord[1] <= 199) and (0 <= coord[0]-450 <= 99):
+            c = coord[0] - 450
+            r = coord[1]
+            canvas[r, c] = 1
+
+    plt.imsave(f'./day14_{step}.png', canvas)
+
+
 ### sand simulation
 wall_coords = generate_wall(lines)
 sand_coords = []
 VOID = max([wall[1] for wall in wall_coords])  # 176
+GROUND = VOID + 1
+END = (500, 0)
 POURING = True
+steps = 0
 
-# while len(sand_coords) < 24:
 while POURING is True:
     unit_done = False
     pos = (500, 0)  # start position
+
+    if pos in sand_coords:
+        print('complete!')
+        break
+
+    if steps % 2000 == 0:
+        draw(steps)
 
     # sand unit pour
     while unit_done is False:
@@ -78,36 +105,31 @@ while POURING is True:
         downleft = (pos[0] - 1, pos[1] + 1)
         downright = (pos[0] + 1, pos[1] + 1)
 
-        # void check / past deepest wall
-        if pos[1] == VOID:
-            POURING = False
-            break
-
         if (down not in wall_coords) and (down not in sand_coords):
-            pos = down
+            # check if ground level reached
+            if down[1] == GROUND:
+                sand_coords.append(down)
+                unit_done = True
+            else:
+                pos = down
         elif (downleft not in wall_coords) and (downleft not in sand_coords):
-            pos = downleft
+            # check if ground level reached
+            if downleft[1] == GROUND:
+                sand_coords.append(downleft)
+                unit_done = True
+            else:
+                pos = downleft
         elif (downright not in wall_coords) and (downright not in sand_coords):
-            pos = downright
+            # check if ground level reached
+            if downright[1] == GROUND:
+                sand_coords.append(downright)
+                unit_done = True
+            else:
+                pos = downright
         else:
             unit_done = True
             sand_coords.append(pos)
-
-
     
-        
-# draw visual
-canvas = np.zeros((200, 100), dtype='uint8')
-for coord in wall_coords:
-    c = coord[0] - 450
-    r = coord[1]
-    canvas[r, c] = 5
-
-for coord in sand_coords:
-    c = coord[0] - 450
-    r = coord[1]
-    canvas[r, c] = 1
-
-plt.imsave('./day14.png', canvas)
+    steps += 1
 
 print('done')
