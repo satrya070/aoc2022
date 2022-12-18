@@ -16,19 +16,27 @@ for line in lines:
     tunnel_data[valve_id]['flowrate'] = flowrate
     tunnel_data[valve_id]['connections'] = connections
 
-source_node = 'AA'
-paths = [[source_node]]
 
-updated_paths = []
+# bfs generate shortest distance for and from every node
+distance_map  = {}
 
-for path in paths:
-    tail_nodes = [path[-1] for path in paths]
-    
-    for tail_node in tail_nodes:
-        for connection in tunnel_data[tail_node]['connections']:
-            updated_path = path.copy()
-            updated_path.append(connection)
-            
-            updated_paths.append(updated_path)
+for source_node in tunnel_data.keys():
 
-print(updated_paths)
+    node_distances = {}
+    distance = 0  # init to self 
+    children = [source_node]
+
+    while children:
+        next_children = []
+
+        for child in children:
+            node_distances[child] = distance
+            next_children = next_children + tunnel_data[child]['connections']
+        
+        children = list(set([child for child in next_children if child not in node_distances]))
+        distance += 1
+
+    distance_map[source_node] = node_distances
+
+
+print('done')
