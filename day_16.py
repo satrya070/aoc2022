@@ -17,7 +17,7 @@ for line in lines:
     tunnel_data[valve_id]['connections'] = connections
 
 
-# bfs generate shortest distance for and from every node
+# ---- BFS generate shortest distance for and from every node ----
 distance_map  = {}
 
 for source_node in tunnel_data.keys():
@@ -37,6 +37,45 @@ for source_node in tunnel_data.keys():
         distance += 1
 
     distance_map[source_node] = node_distances
+
+
+# ----- calculate max flowrate -----
+minute = 0
+flowrate = 0
+total_pressure = 0
+non_empty_nodes = [node for node, data in tunnel_data.items() if data['flowrate'] > 0]
+
+current_node = 'AA'
+visited = [current_node]
+
+while not all([req in visited for req in non_empty_nodes]) or len(visited) == 0:
+    max_dist = max(distance_map[current_node].values()) + 2  # step + open + 1 flow
+
+    node_values = []
+    for node, dist in distance_map[current_node].items():
+        if node == current_node or node in visited:
+            continue
+
+        flowsteps = max_dist - (dist + 1)
+        node_value = flowsteps * tunnel_data[node]['flowrate'] 
+
+        node_values.append((node_value, node))
+
+    next_node = max(node_values)[1]
+    minutes_added = distance_map[current_node][next_node] + 1
+
+    minute += minutes_added
+    total_pressure += (minutes_added * flowrate)
+    flowrate += tunnel_data[next_node]['flowrate']
+
+    print(minute, flowrate, current_node, next_node, total_pressure)
+
+    visited.append(current_node)
+    current_node = next_node
+
+print((30 - minute) * flowrate, total_pressure)
+
+
 
 
 print('done')
