@@ -4,6 +4,11 @@ with open('data/day_13ex.txt') as handle:
     lines = [line[:-1] for line in handle.readlines()]
     lines = [line for line in lines if line != '']
 
+with open('data/day_13.txt') as handle:
+    lines = [line[:-1] for line in handle.readlines()]
+    lines = [line for line in lines if line != '']
+
+
 def pairer(lines):
     pairs = []
     for pnum in range(0, len(lines), 2):
@@ -13,16 +18,13 @@ def pairer(lines):
     
     return pairs
 
+
 def vals_to_list(val_a, val_b):
     # if one is list convert both to list first
     val_a = list([val_a]) if type(val_a) == int else val_a
     val_b = list([val_b]) if type(val_b) == int else val_b
 
     return val_a, val_b
-
-pairs = pairer(lines)
-
-
 
 
 def comparator(list_a, list_b):
@@ -72,29 +74,42 @@ def comparator(list_a, list_b):
         else:  # even
             continue
 
+# --------- main --------- # 
+
 # test cases
-list_a, list_b = pairs[0]
-ex1 = comparator(list_a, list_b)
+# list_a, list_b = pairs[0]
+# ex1 = comparator(list_a, list_b)
 
-list_a, list_b = pairs[1]
-ex2 = comparator(list_a, list_b)
+# list_a, list_b = pairs[1]
+# ex2 = comparator(list_a, list_b)
 
-list_a, list_b = pairs[2]
-ex3 = comparator(list_a, list_b)
+# list_a, list_b = pairs[2]
+# ex3 = comparator(list_a, list_b)
 
-list_a, list_b = pairs[3]
-ex4 = comparator(list_a, list_b)
+# list_a, list_b = pairs[3]
+# ex4 = comparator(list_a, list_b)
 
-list_a, list_b = pairs[4]
-ex5 = comparator(list_a, list_b)
+# list_a, list_b = pairs[4]
+# ex5 = comparator(list_a, list_b)
 
-list_a, list_b = pairs[5]
-ex6 = comparator(list_a, list_b)
+# list_a, list_b = pairs[5]
+# ex6 = comparator(list_a, list_b)
 
-list_a, list_b = pairs[6]
-ex7 = comparator(list_a, list_b)
+# list_a, list_b = pairs[6]
+# ex7 = comparator(list_a, list_b)
 
-list_a, list_b = pairs[7]
-ex8 = comparator(list_a, list_b)
+# list_a, list_b = pairs[7]
+# ex8 = comparator(list_a, list_b)
+
+pairs = pairer(lines)
+
+correct_indexes = []
+
+for i in range(len(pairs)):
+    if comparator(*pairs[i]):
+        correct_indexes.append(i + 1)
+
+print(sum(correct_indexes))
+
 
 print(lines)
