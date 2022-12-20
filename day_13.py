@@ -27,7 +27,19 @@ pairs = pairer(lines)
 
 def comparator(list_a, list_b):
 
-    for val_a, val_b in zip(list_a, list_b):
+    list_a_length  = len(list_a)
+    list_b_length = len(list_b)
+    max_len = max(list_a_length, list_b_length) 
+
+    for idx in range(max_len):
+        if (idx + 1) > list_a_length:
+            return True
+        
+        if (idx + 1) > list_b_length:
+            return False
+
+        val_a = list_a[idx]
+        val_b = list_b[idx]
 
         # convert to both to list and recur into comparator
         if type(val_a) != type(val_b):
@@ -66,14 +78,23 @@ ex1 = comparator(list_a, list_b)
 
 list_a, list_b = pairs[1]
 ex2 = comparator(list_a, list_b)
-print(ex2)
 
 list_a, list_b = pairs[2]
 ex3 = comparator(list_a, list_b)
-print(ex3)
 
 list_a, list_b = pairs[3]
 ex4 = comparator(list_a, list_b)
-print(ex4)
+
+list_a, list_b = pairs[4]
+ex5 = comparator(list_a, list_b)
+
+list_a, list_b = pairs[5]
+ex6 = comparator(list_a, list_b)
+
+list_a, list_b = pairs[6]
+ex7 = comparator(list_a, list_b)
+
+list_a, list_b = pairs[7]
+ex8 = comparator(list_a, list_b)
 
 print(lines)
