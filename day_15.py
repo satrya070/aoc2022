@@ -1,4 +1,9 @@
+import numpy as np
+
 with open('data/day_15ex.txt') as handle:
+    lines = [line[:-1] for line in handle.readlines()]
+
+with open('data/day_15.txt') as handle:
     lines = [line[:-1] for line in handle.readlines()]
 
 
@@ -24,7 +29,7 @@ def parse_sensors():
 
 # -----method---------
 sensors = parse_sensors()
-seekrow = 10
+seekrow = 2000000  # 10
 
 seekrow_ranges = []
 seekrow_beacons = []
@@ -57,8 +62,97 @@ for sensor_beacon in sensors[6:]:
     if beacon_y == seekrow:
         seekrow_beacons.append(beacon)
 
+# merge to unique beacons
+seekrow_beacons = list(set(seekrow_beacons))
 
-# calculate complete range
-complete_range = []
 
-print('done')
+def process_ranges(ranges):
+
+    # if one range just return it
+    if len(ranges) == 1:
+        return ranges
+    
+    processed = []
+
+    for idx in range(len(ranges[:-1])):
+        a_range_start, a_range_end = ranges[idx]
+        b_range_start, b_range_end = ranges[idx + 1]
+
+        # contained in a
+        if a_range_start <= b_range_start and b_range_end <= a_range_end:
+            processed.append((a_range_start, a_range_end))
+            processed = processed + ranges[idx + 2:]
+
+            return process_ranges(processed)
+        
+        # a is contained
+        elif a_range_start >= b_range_start and a_range_end <= b_range_end:
+            processed.append((b_range_start, b_range_end))
+            processed = processed + ranges[idx + 2:]
+
+            return process_ranges(processed)
+
+        # b completely isolated (left)
+        elif b_range_start < a_range_start and b_range_end < a_range_start:
+
+            # consecutive isolates can duplicate
+            if (a_range_start, a_range_end) not in processed:
+                processed.append((a_range_start, a_range_end))
+
+            processed.append((b_range_start, b_range_end))
+
+        # b completely isolated (right)
+        elif b_range_start > a_range_end and b_range_end > a_range_end:
+
+            # consecutive isolates can duplicate
+            if (a_range_start, a_range_end) not in processed:
+                processed.append((a_range_start, a_range_end))
+
+            processed.append((b_range_start, b_range_end))
+
+        # b overlaps left
+        elif b_range_start < a_range_start and a_range_start <= b_range_end < a_range_end:
+
+            # could already be in list due to having been isolate
+            if (a_range_start, a_range_end) in processed:
+                processed.remove((a_range_start, a_range_end))
+
+            processed.append((b_range_start, a_range_end))
+            processed = processed + ranges[idx + 2:]
+
+            return process_ranges(processed)
+
+        # b overlaps right
+        else:
+            # could already be in list due to having been isolate
+            if (a_range_start, a_range_end) in processed:
+                processed.remove((a_range_start, a_range_end))
+
+            processed.append((a_range_start, b_range_end))
+            processed = processed + ranges[idx + 2:]
+
+            return process_ranges(processed)
+            
+    
+    return processed
+
+
+# --------- main --------- #
+end_range = process_ranges(seekrow_ranges)
+
+print('done?')
+
+# test cases
+test1 = process_ranges([(1, 3), (4, 5), (7, 9)])  # isolates
+test2 = process_ranges([(1, 3), (-3, -1)])  # isolate left
+test3 = process_ranges([(1, 2), (-3, 3), (4, 5)])  # a_contained -> isolates
+test4 = process_ranges([(2, 6), (4, 9), (1, 4)])  # overlap right -> overlap left
+test5 = process_ranges([(1, 2), (6, 8), (1, 7), (2, 2), (6, 10)])
+
+
+print(test1)
+print(test2)
+print(test3)
+print(test4)
+print(test5)
+
