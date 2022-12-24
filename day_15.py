@@ -34,7 +34,7 @@ seekrow = 2000000  # 10
 seekrow_ranges = []
 seekrow_beacons = []
 
-for sensor_beacon in sensors[6:]:
+for sensor_beacon in sensors:
 
     sensor, beacon = sensor_beacon
 
@@ -67,7 +67,9 @@ seekrow_beacons = list(set(seekrow_beacons))
 
 
 def process_ranges(ranges):
-
+    """
+    ranges need to SORTED for this crap to actually work
+    """
     # if one range just return it
     if len(ranges) == 1:
         return ranges
@@ -78,7 +80,7 @@ def process_ranges(ranges):
         a_range_start, a_range_end = ranges[idx]
         b_range_start, b_range_end = ranges[idx + 1]
 
-        # contained in a
+        # b is contained
         if a_range_start <= b_range_start and b_range_end <= a_range_end:
             processed.append((a_range_start, a_range_end))
             processed = processed + ranges[idx + 2:]
@@ -94,28 +96,14 @@ def process_ranges(ranges):
 
         # b completely isolated (left)
         elif b_range_start < a_range_start and b_range_end < a_range_start:
-
-            # consecutive isolates can duplicate
-            if (a_range_start, a_range_end) not in processed:
-                processed.append((a_range_start, a_range_end))
-
-            processed.append((b_range_start, b_range_end))
+            processed.append((a_range_start, a_range_end))
 
         # b completely isolated (right)
         elif b_range_start > a_range_end and b_range_end > a_range_end:
-
-            # consecutive isolates can duplicate
-            if (a_range_start, a_range_end) not in processed:
-                processed.append((a_range_start, a_range_end))
-
-            processed.append((b_range_start, b_range_end))
+            processed.append((a_range_start, a_range_end))
 
         # b overlaps left
         elif b_range_start < a_range_start and a_range_start <= b_range_end < a_range_end:
-
-            # could already be in list due to having been isolate
-            if (a_range_start, a_range_end) in processed:
-                processed.remove((a_range_start, a_range_end))
 
             processed.append((b_range_start, a_range_end))
             processed = processed + ranges[idx + 2:]
@@ -124,10 +112,6 @@ def process_ranges(ranges):
 
         # b overlaps right
         else:
-            # could already be in list due to having been isolate
-            if (a_range_start, a_range_end) in processed:
-                processed.remove((a_range_start, a_range_end))
-
             processed.append((a_range_start, b_range_end))
             processed = processed + ranges[idx + 2:]
 
@@ -138,7 +122,9 @@ def process_ranges(ranges):
 
 
 # --------- main --------- #
+seekrow_ranges = sorted(seekrow_ranges)
 end_range = process_ranges(seekrow_ranges)
+
 
 print('done?')
 
