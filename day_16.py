@@ -52,19 +52,22 @@ for key, valve_distances_unfiltered in distance_map_unfiltered.items():
         
         distance_map[key] = valve_distances
 
-# --- new method -------
-valve_flowrates = {
-    'a': 0,
-    'b': 20,
-    'c': 25
-}
+# --- small example -------
+# valve_flowrates = {
+#     'a': 0,
+#     'b': 20,
+#     'c': 25
+# }
 
-del distance_map
-distance_map = {
-    'a': {'b': 1, 'c': 2},
-    'b': {'a': 1, 'c': 1},
-    'c': {'a': 2, 'b': 2}
-}
+# del distance_map
+# distance_map = {
+#     'a': {'b': 1, 'c': 2},
+#     'b': {'a': 1, 'c': 1},
+#     'c': {'a': 2, 'b': 2}
+# }
+
+valve_flowrates = {valve: data['flowrate'] for valve, data in tunnel_data.items()}
+
 
 def explore_max_branch(current, flowrate, opened, remaining):
     
@@ -72,6 +75,7 @@ def explore_max_branch(current, flowrate, opened, remaining):
     neighbors = {
         neighbor: dist for neighbor, dist in distance_map[current].items()
         if (neighbor not in opened) and
+        neighbor != current and
         ((remaining - dist - 1) > 0)
     }
 
@@ -83,6 +87,7 @@ def explore_max_branch(current, flowrate, opened, remaining):
 
     for neighbor, distance in neighbors.items():
         pressure = flowrate * (distance + 1)
+        # print(pressure, neighbor, distance, flowrate, remaining)
 
         branches_accumulated.append(pressure + (explore_max_branch(
             neighbor,
@@ -94,7 +99,7 @@ def explore_max_branch(current, flowrate, opened, remaining):
     return max(branches_accumulated)
 
 
-maxval = explore_max_branch('a', 0, [], 5)
+maxval = explore_max_branch('AA', 0, [], 30)
 # explore_max_branch('b', 20, ['a'], 3)
 
 
