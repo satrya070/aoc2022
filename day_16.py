@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-with open('data/day_16ex.txt') as handle:
+with open('data/day_16.txt') as handle:
     lines = handle.readlines()
     lines = [line[:-1] for line in lines]
 
