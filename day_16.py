@@ -18,7 +18,7 @@ for line in lines:
 
 
 # ---- BFS generate shortest distance for and from every node ----
-distance_map  = {}
+distance_map_unfiltered  = {}
 
 for source_node in tunnel_data.keys():
 
@@ -36,45 +36,66 @@ for source_node in tunnel_data.keys():
         children = list(set([child for child in next_children if child not in node_distances]))
         distance += 1
 
-    distance_map[source_node] = node_distances
+    distance_map_unfiltered[source_node] = node_distances
 
 
-# ----- calculate max flowrate -----
-minute = 0
-flowrate = 0
-total_pressure = 0
-non_empty_nodes = [node for node, data in tunnel_data.items() if data['flowrate'] > 0]
+# remove worthess valves
+valves_zero = ['II', 'GG', 'FF']
+distance_map = {}
 
-current_node = 'AA'
-visited = [current_node]
+for key, valve_distances_unfiltered in distance_map_unfiltered.items():
+    if key not in valves_zero:
+        valve_distances = {}
+        for valve in valve_distances_unfiltered:
+            if valve not in valves_zero:
+                valve_distances[valve] = valve_distances_unfiltered[valve]
+        
+        distance_map[key] = valve_distances
 
-while not all([req in visited for req in non_empty_nodes]) or len(visited) == 0:
-    max_dist = max(distance_map[current_node].values()) + 2  # step + open + 1 flow
+# --- new method -------
+valve_flowrates = {
+    'a': 0,
+    'b': 20,
+    'c': 25
+}
 
-    node_values = []
-    for node, dist in distance_map[current_node].items():
-        if node == current_node or node in visited:
-            continue
+del distance_map
+distance_map = {
+    'a': {'b': 1, 'c': 2},
+    'b': {'a': 1, 'c': 1},
+    'c': {'a': 2, 'b': 2}
+}
 
-        flowsteps = max_dist - (dist + 1)
-        node_value = flowsteps * tunnel_data[node]['flowrate'] 
+def explore_max_branch(current, flowrate, opened, remaining):
+    
+    # get neighbors and filter out opened and neighbors outside time limit
+    neighbors = {
+        neighbor: dist for neighbor, dist in distance_map[current].items()
+        if (neighbor not in opened) and
+        ((remaining - dist - 1) > 0)
+    }
 
-        node_values.append((node_value, node))
+    if not neighbors:
+        return flowrate * remaining
 
-    next_node = max(node_values)[1]
-    minutes_added = distance_map[current_node][next_node] + 1
+    # calculate flowrates
+    branches_accumulated = []
 
-    minute += minutes_added
-    total_pressure += (minutes_added * flowrate)
-    flowrate += tunnel_data[next_node]['flowrate']
+    for neighbor, distance in neighbors.items():
+        pressure = flowrate * (distance + 1)
 
-    print(minute, flowrate, current_node, next_node, total_pressure)
+        branches_accumulated.append(pressure + (explore_max_branch(
+            neighbor,
+            flowrate + valve_flowrates[neighbor],
+            opened + [current],
+            remaining - (distance + 1)
+        )))
 
-    visited.append(current_node)
-    current_node = next_node
+    return max(branches_accumulated)
 
-print((30 - minute) * flowrate, total_pressure)
 
+maxval = explore_max_branch('a', 0, [], 5)
+# explore_max_branch('b', 20, ['a'], 3)
 
 
 
