@@ -39,20 +39,28 @@ for source_node in tunnel_data.keys():
     distance_map_unfiltered[source_node] = node_distances
 
 
-# remove worthess valves
-valves_zero = ['II', 'GG', 'FF']
+# map of all relevant valve with their rate
+valve_flowrates = {
+    valve: data['flowrate'] for valve, data in tunnel_data.items()
+    if data['flowrate'] > 0 or
+    valve == 'AA'
+}
+
+# distance map with worthess valves removed
+# valves_zero = ['II', 'GG', 'FF']
 distance_map = {}
 
 for key, valve_distances_unfiltered in distance_map_unfiltered.items():
-    if key not in valves_zero:
+    if key in valve_flowrates:
         valve_distances = {}
         for valve in valve_distances_unfiltered:
-            if valve not in valves_zero:
+            if valve in valve_flowrates:
                 valve_distances[valve] = valve_distances_unfiltered[valve]
         
         distance_map[key] = valve_distances
 
-# --- small example -------
+
+# ------ small example -------
 # valve_flowrates = {
 #     'a': 0,
 #     'b': 20,
@@ -66,8 +74,7 @@ for key, valve_distances_unfiltered in distance_map_unfiltered.items():
 #     'c': {'a': 2, 'b': 2}
 # }
 
-valve_flowrates = {valve: data['flowrate'] for valve, data in tunnel_data.items()}
-
+# ---------------------------
 
 def explore_max_branch(current, flowrate, opened, remaining):
     
