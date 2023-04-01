@@ -1,6 +1,7 @@
 from collections import defaultdict
+from itertools import combinations
 
-with open('data/day_16.txt') as handle:
+with open('data/day_16ex.txt') as handle:
     lines = handle.readlines()
     lines = [line[:-1] for line in lines]
 
@@ -46,7 +47,7 @@ valve_flowrates = {
     valve == 'AA'
 }
 
-# distance map with worthess valves removed
+# distance map with worthess valves(0 pressure) removed
 distance_map = {}
 
 for key, valve_distances_unfiltered in distance_map_unfiltered.items():
@@ -107,7 +108,23 @@ def explore_max_branch(current, flowrate, opened, remaining):
     return max(branches_accumulated)
 
 
-maxval = explore_max_branch('AA', 0, [], 30)
+# part 2
+runs = []
+valves_to_combine = sorted(list(valve_flowrates.keys()))[1:]  # don't include AA
+
+for split in range(1, len(valves_to_combine) + 1):
+    combos = list(combinations(valves_to_combine, split))
+    for combo in combos:
+        difference = set(valves_to_combine).difference(set(combo))
+
+        # which valves to the human/elephant skips in his run
+        human_skips = list(combo)
+        elephant_skips = list(difference)
+        
+        human_maxval = explore_max_branch('AA', 0, human_skips, 26)
+        elephant_maxval = explore_max_branch('AA', 0, elephant_skips, 26)
+
+        runs.append((human_maxval, elephant_maxval))
 
 
-print(f'done: {maxval}')
+print('done')
