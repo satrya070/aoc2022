@@ -1,7 +1,7 @@
 from collections import defaultdict
 from itertools import combinations
 
-with open('data/day_16ex.txt') as handle:
+with open('data/day_16.txt') as handle:
     lines = handle.readlines()
     lines = [line[:-1] for line in lines]
 
@@ -124,7 +124,7 @@ for split in range(1, len(valves_to_combine) + 1):
         human_maxval = explore_max_branch('AA', 0, human_skips, 26)
         elephant_maxval = explore_max_branch('AA', 0, elephant_skips, 26)
 
-        runs.append((human_maxval, elephant_maxval))
+        runs.append(human_maxval + elephant_maxval)
 
 
-print('done')
+print(f'done: {max(runs)}')
