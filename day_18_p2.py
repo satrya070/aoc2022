@@ -44,29 +44,29 @@ def is_adjacent(block_a, block_b, block_dict):
     
     return block_dict
 
-blocks_todo = example
+blocks_todo = lines # lines
 
 # generate dict with all surface for each block
-block_surfaces = {}
-for block in blocks_todo:
-    # left: 0, up: 1, right: 2, down: 3, top: 4, bottom: 5
-    block_surfaces[block] = [
-        True, True, True, True, True, True
-    ]
+# block_surfaces = {}
+# for block in blocks_todo:
+#     # left: 0, up: 1, right: 2, down: 3, top: 4, bottom: 5
+#     block_surfaces[block] = [
+#         True, True, True, True, True, True
+#     ]
 
 # go through all blocks and check if they are adjacent and update surfaces dict
-for main, block in enumerate(blocks_todo):
-    for sub, sub_block in enumerate(blocks_todo):
-        if main == sub:
-            continue
+# for main, block in enumerate(blocks_todo):
+#     for sub, sub_block in enumerate(blocks_todo):
+#         if main == sub:
+#             continue
 
-        block_surfaces = is_adjacent(block, sub_block, block_surfaces)
+#         block_surfaces = is_adjacent(block, sub_block, block_surfaces)
 
 # count all uncovered surfaces
-uncovered_surfaces = 0
+# uncovered_surfaces = 0
 
-for block, surfaces in block_surfaces.items():
-    uncovered_surfaces += surfaces.count(True)
+# for block, surfaces in block_surfaces.items():
+#     uncovered_surfaces += surfaces.count(True)
 
 # part 2 ---------------------------------------------------------
 
@@ -84,18 +84,16 @@ for block in blocks_todo:
         if adjacent_block not in all_adjacent_blocks and adjacent_block not in blocks_todo:
             all_adjacent_blocks[adjacent_block] = [True, True, True, True, True, True]
 
-    # check if adjacent block is in blocks_todo
-    # for adjacent_block in adjacent_blocks:
-    #     if adjacent_block in blocks_todo:
-    #         is_adjacent(block, adjacent_block)
-
 # check all adjacent blocks with actual blocks
 for main, block in enumerate(all_adjacent_blocks):
     for sub, sub_block in enumerate(blocks_todo):
-        adjacent = is_adjacent(block, sub_block)
+        all_adjacent_blocks = is_adjacent(block, sub_block, all_adjacent_blocks)
 
-# print(uncovered_surfaces)
-# print('done!')
+waterfilled = sum([6 for pos, uncovered in all_adjacent_blocks.items() if not any(uncovered)])
 
-# x = is_adjacent((1, 1, 1), (2, 1, 1))
+# print(uncovered_surfaces - waterfilled)
+print('done!')
 
+# 3326 too high 3320
+
+# check double droplet situation
