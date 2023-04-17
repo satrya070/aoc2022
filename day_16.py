@@ -62,15 +62,17 @@ for key, valve_distances_unfiltered in distance_map_unfiltered.items():
 # ------ small example -------
 # valve_flowrates = {
 #     'a': 0,
-#     'b': 20,
-#     'c': 25
+#     'b': 10,
+#     'c': 7,
+#     'd': 15
 # }
 
-# del distance_map
+# # del distance_map
 # distance_map = {
-#     'a': {'b': 1, 'c': 2},
-#     'b': {'a': 1, 'c': 1},
-#     'c': {'a': 2, 'b': 2}
+#     'a': {'b': 1, 'c': 1, 'd': 2},
+#     'b': {'a': 1, 'c': 2, 'd': 3},
+#     'c': {'b': 2, 'a': 1, 'd': 1},
+#     'd': {'b': 3, 'c': 1, 'a': 2}
 # }
 
 # ---------------------------
@@ -107,7 +109,7 @@ def explore_max_branch(current, flowrate, opened, remaining):
     return max(branches_accumulated)
 
 
+# maxval = explore_max_branch('a', 0, [], 7)  # for the small example
 maxval = explore_max_branch('AA', 0, [], 30)
-
 
 print(f'done: {maxval}')
